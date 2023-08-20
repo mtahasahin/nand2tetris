@@ -1,0 +1,153 @@
+
+//game area 512 x 256 // 64 x 32
+class Snake{
+    field LinkedList snake;
+    field int currentDirection;
+    field Location tailToClear;
+
+    constructor Snake new(){
+        var LinkedList current;
+        var int len, i;
+        let len = 6;
+        let i = 0;
+        let currentDirection = 1; // default right
+
+        let current = LinkedList.new(Location.new(32,16),null);
+        let snake = current;
+        while(i < len){
+            do current.setNext(LinkedList.new(Location.new(32+i, 16), null));
+            let current = current.getNext();
+            let i = i + 1;
+        }
+        return this;
+    }
+
+    method void setTail(){
+        var Location temp;
+        let temp = snake.getLocation();
+        let tailToClear = Location.new(temp.getX(), temp.getY());
+        return;
+    }
+
+    method LinkedList moveBody(){
+        var LinkedList current, next;
+        var Location currentLocation, nextLocation;
+        let current = snake;
+        while(~(current.getNext() = null)) {
+            let next = current.getNext();
+            let currentLocation = current.getLocation();
+            let nextLocation = next.getLocation();
+            do currentLocation.setX(nextLocation.getX());
+            do currentLocation.setY(nextLocation.getY());
+            let current = next;
+        }
+        return current;
+    }
+
+    method int moveHead(LinkedList head, int direction, Location food){
+        var int x, y, status;
+        var Location location;
+        var boolean collusion, eatFood;
+
+        let status = 0;
+        let location = head.getLocation();
+
+        let x = location.getX();
+        let y = location.getY();
+
+        if( (direction = 1 & currentDirection = 3) |
+         (direction = 3 & currentDirection = 1) | 
+         (direction = 2 & currentDirection = 4) |
+          (direction = 4 & currentDirection = 2)){
+            let direction = currentDirection;
+        } else{
+            let currentDirection = direction;
+        }
+
+        if(direction = 1){
+            let x = x + 1;
+        }
+        if(direction = 2){
+            let y = y - 1;
+        }
+        if(direction = 3){
+            let x = x - 1;
+        }
+        if(direction = 4){
+            let y = y + 1;
+        }
+
+        let collusion = checkCollusion(x, y, snake);
+        if(collusion){
+            return 1;
+        }
+        let eatFood = checkFood(x, y, food);
+        if(eatFood){
+            let status = 2;
+            let snake = LinkedList.new(tailToClear, snake);
+            let tailToClear = null;
+        }
+
+        do location.setX(x);
+        do location.setY(y);
+
+        do draw();
+        return status;
+    }
+
+    method int move(int direction, Location food){ // 1=right, 2=up, 3=left, 4=down
+        var LinkedList head;
+        do setTail();
+        let head = moveBody();
+        return moveHead(head, direction, food);
+    }
+
+    method boolean checkCollusion(int x, int y, LinkedList snake){
+        var LinkedList current;
+        var Location location;
+        if((x = 63) | (x < 0) | (y = 31) | (y = 0)){
+            return true;
+        }
+        let current = snake;
+        while(~(current = null)){
+            let location = current.getLocation();
+            if((location.getX() = x) * (location.getY() = y)){
+                return true;
+            }
+            let current = current.getNext();
+        }
+
+        return false;
+    }
+
+    method boolean checkFood(int x, int y, Location food){
+        if((x = food.getX()) & (y = food.getY())){
+            return true;
+        }
+        return false;
+    }
+
+    method void draw(){
+        var LinkedList current;
+        var Location loc;
+
+        if(~(tailToClear = null)){
+            do Screen.setColor(false);
+            do Screen.drawRectangle(tailToClear.getX() * 8, (tailToClear.getY() * 8) + 7, (tailToClear.getX() * 8) + 8, (tailToClear.getY() * 8) + 15);
+        }
+       
+        do Screen.setColor(true);
+        let current = snake;
+        while(~(current = null)){
+            let loc = current.getLocation();
+            do Screen.drawRectangle(loc.getX() * 8, (loc.getY() * 8) + 7, (loc.getX() * 8) + 8, (loc.getY() * 8) + 15);
+            let current = current.getNext();
+        }
+        return;
+    }
+
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

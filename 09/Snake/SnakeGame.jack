@@ -1,0 +1,106 @@
+class SnakeGame{
+    field int score;
+    field Snake snake;
+    field Location food;
+
+    constructor SnakeGame new(){
+        do restartGame();
+        return this;
+    }
+
+      method void run() {
+        var char key;  // the key currently pressed by the user
+        var boolean exit, collusion, restart;
+        var int status;
+        var int direction;
+        var int loop;
+
+        let direction = 1;
+        let exit = false;
+        let loop = 1;
+        let status = 0;
+
+        do drawBorders();
+        
+        while (~exit) {
+            let key = Keyboard.keyPressed();
+            let loop = loop + 1;
+            if (key = 131) { let direction = 2; }   // up arrow
+            if (key = 133) { let direction = 4; }   // down arrow
+            if (key = 130) { let direction = 3; }   // left arrow
+            if (key = 132) { let direction = 1; }   // right arrow
+            if(loop > 100){
+                let loop = 0;
+                let status = snake.move(direction, food); 
+                if(status = 1){
+                    do Output.printString(" -- GAME OVER -- PRESS R FOR RESTART");
+                    while(~restart){
+                        let key = Keyboard.keyPressed();
+                        if(key = 82){
+                            let restart = true;
+                        }
+                    }
+                }
+                if(status = 2){
+                    do updateScore();
+                    do generateFood();
+                }
+            }
+            do Sys.wait(5);
+
+            if(restart){
+                let direction = 1;
+                do restartGame();
+                let restart = false;
+            }
+        } 
+        return;
+   }
+
+   method void restartGame(){
+        do Screen.clearScreen();
+        do drawBorders();
+        let score = 0;
+        if(~(snake=null)){
+            do snake.dispose();
+        }
+        let snake = Snake.new();
+        do Random.setSeed(1);
+        do generateFood();
+        do printScore();
+        return;
+   }
+
+    method void generateFood(){
+        if(~(food = null)){
+            do food.dispose();
+        }
+        
+        let food = Location.new(1+Random.randRange(60), 1+Random.randRange(29));
+        do Screen.drawRectangle(food.getX() * 8, (food.getY() * 8) + 7, (food.getX() * 8) + 8, (food.getY() * 8) + 15);
+        return;
+    }
+
+    method void updateScore(){
+        let score = score + 1;
+        do printScore();
+        return;
+    }
+
+    method void printScore(){
+        do Output.moveCursor(0,0);
+        do Output.printString("Score: ");
+        do Output.printInt(score);
+        return;
+    }
+
+    method void drawBorders(){
+        do Screen.drawRectangle(0,12,511,13);
+        return;
+    }
+
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

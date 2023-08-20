@@ -1,0 +1,31 @@
+class LinkedList{
+    field LinkedList next;
+    field Location data;
+
+    constructor LinkedList new(Location dataArg, LinkedList nextArg){
+        let data = dataArg;
+        let next = nextArg;
+        return this;
+    }
+
+    method Location getLocation(){
+        return data;
+    }
+
+    method LinkedList getNext(){
+        return next;
+    }
+
+    method void setNext(LinkedList nextArg){
+        let next = nextArg;
+        return; 
+    }
+
+    method void dispose() {
+        if (~(next = null)) {
+            do next.dispose();
+        }
+        do Memory.deAlloc(this);
+        return;
+    }
+}

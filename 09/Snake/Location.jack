@@ -1,0 +1,33 @@
+class Location{
+    field int x;
+    field int y;
+
+    constructor Location new(int xArg, int yArg){
+        let x = xArg;
+        let y = yArg;
+        return this;
+    }
+
+    method int getX(){
+        return x;
+    }
+
+    method int getY(){
+        return y;
+    }
+
+    method void setX(int xArg){
+        let x = xArg;
+        return;
+    }
+
+    method void setY(int yArg){
+        let y = yArg;
+        return;
+    }
+
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

@@ -1,0 +1,41 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/11/ComplexArrays/Main.jack
+
+/**
+ * Performs several complex array processing tests.
+ * For each test, the expected result is printed, along with the
+ * actual result. In each test, the two results should be equal.
+ */
+class Main {
+
+    function void main() {
+        var Array a, b;
+
+        let a = Array.new(10);
+        let b = Array.new(5);
+
+        let a[3] = 2;
+        let b[4] = 8;
+        let b[a[3]] = a[3] + 3;
+
+        do Output.printString("Test 3: expected result: 5; actual result: ");
+        do Output.printInt(b[2]);
+        do Output.println();
+
+        return;
+    }
+    
+    function int double(int a) {
+    	return a * 2;
+    }
+    
+    function void fill(Array a, int size) {
+        while (size > 0) {
+            let size = size - 1;
+            let a[size] = Array.new(3);
+        }
+        return;
+    }
+}
